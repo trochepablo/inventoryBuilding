@@ -1,58 +1,35 @@
 ﻿@model IEnumerable<Inventory.Models.Entity.Edificio>
+@using NonFactors.Mvc.Grid;
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Listado de edificios";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Listado de edificios</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Agregar", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Codigo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Direccion)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Tecnico)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Estado)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Fecha)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Codigo)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Direccion)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Tecnico)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Estado)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Fecha)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
-
-</table>
+    @(Html
+        .Grid(Model)
+        .Build(columns =>
+        {
+            columns.Add(model => model.Codigo).Titled("Codigo");
+            columns.Add(model => model.Direccion).Titled("Dirección");
+            columns.Add(model => model.Tecnico).Titled("Técnico");
+            columns.Add(model => model.Fecha).Titled("Fecha").Formatted("{0:d}").Filterable(false);
+            columns.Add(model => model.EstadoDesc).Titled("Estado").WithFilterOptions(new[]
+                                                                    {
+                                                                        new SelectListItem(),
+                                                                        new SelectListItem { Value = "PreCumplido", Text = "Pre-Cumplido" },
+                                                                        new SelectListItem { Value = "Cumplido", Text = "Cumplido" }
+                                                                    });
+        })
+        .WithFilterMode(GridFilterMode.FilterRow)
+        .Empty("No se encontraron datos.")
+        .Filterable()
+        .Sortable()
+        .Pageable()
+    )
