@@ -10,6 +10,6 @@ namespace Inventory.Models.Entity
         public int Id { get; set; }
         public int Codigo { get; set; }
         public string Nombre { get; set; }
-        public virtual ICollection<EdificiosMateriales> EdificiosMateriales { get; set; }
+        //public virtual ICollection<EdificiosMateriales> EdificiosMateriales { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace Inventory.Models.Entity
     {
         public Edificio()
         {
-            this.Materiales = new HashSet<Material>();
+            EdificiosMateriales = new List<EdificiosMateriales>();
         }
 
         public int Id { get; set; }
@@ -24,7 +24,14 @@ namespace Inventory.Models.Entity
         public DateTime? Fecha { get; set; }
         public virtual ICollection<Material> Materiales { get; set; }
 
-        public virtual ICollection<EdificiosMateriales> EdificiosMateriales { get; set; }
+        public virtual List<EdificiosMateriales> EdificiosMateriales { get; set; }
+
+        [NotMapped]
+        public int CantidadMateriales => CalculateMaterials();
+
+        private int CalculateMaterials() {
+            return this.EdificiosMateriales.Sum(c => c.Cantidad);
+        }
 
         [NotMapped]
         public string EstadoDesc

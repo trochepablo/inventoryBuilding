@@ -16,7 +16,6 @@
 .mvc-grid {
     line-height: 1.25em;
     position: relative;
-    overflow-x: auto;
     font-size: 1rem;
 }
 

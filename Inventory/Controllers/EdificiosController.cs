@@ -42,7 +42,7 @@ namespace Inventory.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Edificio edificio = BuildModelEdificio(id, false);
+            Edificio edificio = db.Edificios.Find(id);
 
             ViewBag.MaterialesOptions = db.Materiales.ToList()
              .Select(x => new SelectListItem { Text = string.Format("{0} - {1}", x.Codigo, x.Nombre), Value = x.Id.ToString() })
@@ -56,80 +56,86 @@ namespace Inventory.Controllers
             return View(edificio);
         }
 
-        private Edificio BuildModelEdificio(int? id, bool isUpdate)
-        {
-            Edificio edificio = db.Edificios.Find(id);
-
-            if (isUpdate || edificio.Materiales == null || edificio.Materiales.Count == 0)
-            {
-                if (isUpdate)
-                {
-                    edificio.Materiales.Clear();
-                }
-                var edificioMateriales = db.EdificiosMateriales.Where(c => c.EdificioId == id);
-
-                foreach (var item in edificioMateriales)
-                {
-                    edificio.Materiales.Add(new Material { Codigo = item.Material.Codigo, Id = item.Material.Id, Nombre = item.Material.Nombre });
-                }
-            }
-
-            return edificio;
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Associate([Bind(Include = "Id,Codigo,Direccion,Tecnico,Estado,Fecha,Materiales")] Edificio edificio, string submitButton)
+        public ActionResult Associate(Edificio edificio, string submitButton, int? materialId)
         {
-            bool isUpdate = false;
+            GetAllOptionsMaterial();
+
+
+            switch (submitButton)
+            {
+                case "Agregar Material":
+                    handlerAsocciateMaterial(edificio, false);
+                    break;
+                case "Guardar":
+                    handlerUpdateAsocciate(edificio);
+                    return RedirectToAction("Index");
+                case "Agregar todo":
+                    handlerAsocciateMaterial(edificio, true);
+                    break;
+                case null:
+                    var materialToDelete = edificio.EdificiosMateriales.Find(c => c.MaterialId == materialId);
+                    if (materialToDelete != null)
+                    {
+                        db.Entry(materialToDelete).State = EntityState.Deleted;
+                        db.SaveChanges();
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+
+            return View(db.Edificios.Find(edificio.Id));
+        }
+
+        private void handlerUpdateAsocciate(Edificio edificio)
+        {
+            foreach (var item in edificio.EdificiosMateriales)
+            {
+                db.Entry(item).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+        }
+
+        private void handlerAsocciateMaterial(Edificio edificio, bool addAll)
+        {
+            if (addAll)
+            {
+                foreach (var item in db.Materiales.ToList())
+                {
+                    if (!existMaterialEnEdificio(item.Id, edificio.Id))
+                    {
+                        new EdificiosMaterialesService().Insert(edificio.Id, item.Id);
+                    }
+                }
+            }
+            else
+            {
+                int idMaterial = Convert.ToInt32(Request.Form["MaterialesOptions"]);
+                if (!existMaterialEnEdificio(idMaterial, edificio.Id))
+                {
+                    new EdificiosMaterialesService().Insert(edificio.Id, idMaterial);
+                }
+                else
+                {
+                    ModelState.AddModelError("Error", "Ya existe material.");
+                }
+            }
+        }
+
+        private void GetAllOptionsMaterial()
+        {
             ViewBag.MaterialesOptions = db.Materiales.ToList()
              .Select(x => new SelectListItem { Text = string.Format("{0} - {1}", x.Codigo, x.Nombre), Value = x.Id.ToString() })
              .ToList();
-
-            if (ModelState.IsValid)
-            {
-                switch (submitButton)
-                {
-                    case "Agregar Material":
-                        int idMaterial = Convert.ToInt32(Request.Form["MaterialesOptions"]);
-                        if (!existMaterialEnEdificio(idMaterial, edificio.Id))
-                        {
-                            new EdificiosMaterialesService().Insert(edificio.Id, idMaterial);
-                            edificio.Materiales = null;
-                            isUpdate = true;
-                        }
-                        else {
-                            ModelState.AddModelError("Error", "Ya existe material.");
-                        }
-                        break;
-                    case "Guardar":
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            return View(BuildModelEdificio(edificio.Id, isUpdate));
         }
 
         private bool existMaterialEnEdificio(int idMaterial, int ediId)
         {
-            Edificio edi = BuildModelEdificio(ediId, false);
-            return edi.Materiales.Any(c => c.Id == idMaterial);
+            return db.EdificiosMateriales.Where(c => c.EdificioId == ediId).Any(c => c.MaterialId == idMaterial);
         }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult AddMaterial([Bind(Include = "Id,Codigo,Direccion,Tecnico,Estado,Fecha,Materiales")] Edificio edificio, string submitButton)
-        {
-            if (ModelState.IsValid)
-            {
-
-            }
-
-            return View(edificio);
-        }
-
 
         // GET: Edificios/Create
         public ActionResult Create()
