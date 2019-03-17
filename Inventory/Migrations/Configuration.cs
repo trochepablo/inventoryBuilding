@@ -9,7 +9,7 @@ namespace Inventory.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
             ContextKey = "Inventory.Models.Context.InventoryContext";
         }
 

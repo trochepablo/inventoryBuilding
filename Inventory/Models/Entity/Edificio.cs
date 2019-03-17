@@ -9,6 +9,11 @@ namespace Inventory.Models.Entity
 {
     public class Edificio
     {
+        public Edificio()
+        {
+            this.Materiales = new HashSet<Material>();
+        }
+
         public int Id { get; set; }
         public int Codigo { get; set; }
         public string Direccion { get; set; }
@@ -18,6 +23,8 @@ namespace Inventory.Models.Entity
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? Fecha { get; set; }
         public virtual ICollection<Material> Materiales { get; set; }
+
+        public virtual ICollection<EdificiosMateriales> EdificiosMateriales { get; set; }
 
         [NotMapped]
         public string EstadoDesc

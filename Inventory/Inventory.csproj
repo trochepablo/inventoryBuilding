@@ -151,6 +151,7 @@
     <Compile Include="Models\Context\InventoryContext.cs" />
     <Compile Include="Models\Entity\Material.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\EdificiosMateriales.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -203,6 +204,7 @@
     <Content Include="Views\Materiales\Index.cshtml" />
     <Content Include="Views\Shared\MvcGrid\_Pager.cshtml" />
     <Content Include="Views\Shared\MvcGrid\_Grid.cshtml" />
+    <Content Include="Views\Edificios\Associate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

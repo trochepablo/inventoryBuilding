@@ -16,17 +16,26 @@
         .Grid(Model)
         .Build(columns =>
         {
-            columns.Add(model => model.Codigo).Titled("Codigo");
-            columns.Add(model => model.Direccion).Titled("Dirección");
-            columns.Add(model => model.Tecnico).Titled("Técnico");
-            columns.Add(model => model.Fecha).Titled("Fecha").Formatted("{0:d}").Filterable(false);
-            columns.Add(model => model.EstadoDesc).Titled("Estado").WithFilterOptions(new[]
-                                                                    {
-                                                                        new SelectListItem(),
-                                                                        new SelectListItem { Value = "PreCumplido", Text = "Pre-Cumplido" },
-                                                                        new SelectListItem { Value = "Cumplido", Text = "Cumplido" }
-                                                                    });
+        columns.Add(model => model.Codigo).Titled("Codigo");
+        columns.Add(model => model.Direccion).Titled("Dirección");
+        columns.Add(model => model.Tecnico).Titled("Técnico");
+        columns.Add(model => model.Fecha).Titled("Fecha").Formatted("{0:d}").Filterable(false);
+        columns.Add(model => model.EstadoDesc).Titled("Estado")
+            .WithFilterOptions(
+                new[]
+                {
+                    new SelectListItem(),
+                    new SelectListItem { Value = "PreCumplido", Text = "Pre-Cumplido" },
+                    new SelectListItem { Value = "Cumplido", Text = "Cumplido" }
+                }
+            );
+        columns.Add(m => Html.ActionLink("Asociar", "associate", new { id = m.Id }, new { @class = "btn btn-success btn-xs" }));
+        columns.Add(m => Html.ActionLink("Detalle", "Details", new { id = m.Id }, new { @class = "btn btn-info btn-xs" }));
+        columns.Add(m => Html.ActionLink("Editar", "Edit", new { id = m.Id }, new { @class = "btn btn-primary btn-xs" }));
+        columns.Add(m => Html.ActionLink("Eliminar", "Delete", new { id = m.Id }, new { @class = "btn btn-danger btn-xs" }));
+
         })
+
         .WithFilterMode(GridFilterMode.FilterRow)
         .Empty("No se encontraron datos.")
         .Filterable()
