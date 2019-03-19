@@ -8,10 +8,10 @@
 <h2>Crear</h2>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Edificio</h4>
         <hr />
@@ -33,14 +33,6 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Tecnico, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Tecnico, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Tecnico, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
             @Html.LabelFor(model => model.Estado, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Estado, new { htmlAttributes = new { @class = "form-control" } })
@@ -56,17 +48,62 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Crear" class="btn btn-default" />
+        <div class="panel panel-primary">
+            <div class="panel-heading">Tecnicos</div>
+            <div class="panel-body">
+                <p>
+                    @Html.DropDownList("TecnicosOptions")
+                    <input type="submit" name="submitButton" value="Agregar Técnico" class="btn btn-success btn-xs">
+                </p>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>
+                            DNI
+                        </th>
+                        <th>
+                            Nombre
+                        </th>
+                        <th>
+                            Cargo
+                        </th>
+                        <th></th>
+                    </tr>
+
+                    @for (var i = 0; i < (Model != null ? Model.Tecnicos.Count : 0); i++)
+                    {
+                        @Html.HiddenFor(x => x.Tecnicos[i].Id)
+                        @Html.HiddenFor(x => x.Tecnicos[i].Nombre)
+                        @Html.HiddenFor(x => x.Tecnicos[i].Cargo)
+                        @Html.HiddenFor(x => x.Tecnicos[i].Dni)
+                        @Html.HiddenFor(x => x.Tecnicos[i].Direccion)
+                        @Html.HiddenFor(x => x.Tecnicos[i].Telefono)
+                        
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(x => x.Tecnicos[i].Dni)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(x => x.Tecnicos[i].Nombre)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(x => x.Tecnicos[i].Cargo)
+                            </td>
+                            <td>
+                                <button type="submit" name="tecnicoId" value="@Model.Tecnicos[i].Id" class="btn btn-danger btn-xs">x</button>
+                            </td>
+                        </tr>
+                    }
+                </table>
             </div>
+
         </div>
+    </div>
+    <div class="form-group">
+        <button type="submit" name="submitButton" value="Crear"  class="btn btn-success">Crear</button>
+        @Html.ActionLink("Volver", "Index", null, new { @class = "btn btn-default" })
     </div>
 }
 
-<div>
-    @Html.ActionLink("Volver", "Index", null, new { @class = "btn btn-default" })
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

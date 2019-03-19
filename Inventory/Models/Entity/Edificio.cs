@@ -12,6 +12,7 @@ namespace Inventory.Models.Entity
         public Edificio()
         {
             EdificiosMateriales = new List<EdificiosMateriales>();
+            Tecnicos = new List<Persona>();
         }
 
         public int Id { get; set; }
@@ -19,6 +20,10 @@ namespace Inventory.Models.Entity
         public string Direccion { get; set; }
         public string Tecnico { get; set; }
         public int Estado { get; set; }
+
+        public virtual List<Persona> Tecnicos { get; set; }
+        
+
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? Fecha { get; set; }

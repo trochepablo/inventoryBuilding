@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using Inventory.Models.Context;
 using Inventory.Models.Entity;
 using Inventory.Services;
+using OfficeOpenXml;
 
 namespace Inventory.Controllers
 {
@@ -132,14 +133,86 @@ namespace Inventory.Controllers
              .ToList();
         }
 
+        private void GetAllOptionsTecnicos()
+        {
+            ViewBag.TecnicosOptions = db.Personas.ToList()
+             .Select(x => new SelectListItem { Text = string.Format("{0} - {1}", x.Nombre, x.Cargo), Value = x.Id.ToString() })
+             .ToList();
+        }
+
         private bool existMaterialEnEdificio(int idMaterial, int ediId)
         {
             return db.EdificiosMateriales.Where(c => c.EdificioId == ediId).Any(c => c.MaterialId == idMaterial);
         }
 
+        [HttpGet]
+        public FileContentResult ExportIndex()
+        {
+            var req = Request.QueryString;
+
+            var list = new List<Edificio>();
+            string param1 = "Todos";
+
+            if (req.Count > 0 && !string.IsNullOrEmpty(param1))
+            {
+                param1 = req["estado-desc-starts-with"].ToLower();
+
+                int param = param1 == "cumplido" ? 1 : 0;
+
+                list = db.Edificios.Where(c => c.Estado == param).ToList();
+            }
+            else
+            {
+                list = db.Edificios.ToList();
+            }
+            return CreateExcel(list, param1);
+
+        }
+
+        public FileContentResult CreateExcel(IEnumerable<Edificio> data, string estado)
+        {
+            // Using EPPlus from nuget
+            using (ExcelPackage package = new ExcelPackage())
+            {
+                Int32 row = 4;
+                Int32 col = 1;
+
+                package.Workbook.Worksheets.Add("Data");
+
+                ExcelWorksheet sheet = package.Workbook.Worksheets["Data"];
+
+                sheet.Cells[1, 1].Value = "Estado edificio: ";
+
+                sheet.Cells[3, 1].Value = "Material";
+                sheet.Cells[3, 2].Value = "Cantidad";
+
+
+                List<EdificiosMateriales> result = data.SelectMany(c => c.EdificiosMateriales)
+                    .GroupBy(l => l.MaterialId)
+                    .Select(cl => new EdificiosMateriales
+                    {
+                        MaterialId = cl.First().MaterialId,
+                        Cantidad = cl.Sum(c => c.Cantidad),
+                    }).ToList();
+
+                sheet.Cells[1, 2].Value = estado;
+
+                foreach (var item in result)
+                {
+
+                    sheet.Cells[row, 1].Value = db.Materiales.Find(item.MaterialId).Nombre;
+                    sheet.Cells[row, 2].Value = item.Cantidad;
+
+                    row++;
+                }
+
+                return File(package.GetAsByteArray(), "application/unknown", "CantidadMaterialesPorEstado_" + DateTime.Now.ToShortDateString() + ".xlsx");
+            }
+        }
         // GET: Edificios/Create
         public ActionResult Create()
         {
+            GetAllOptionsTecnicos();
             return View();
         }
 
@@ -148,17 +221,43 @@ namespace Inventory.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Codigo,Direccion,Tecnico,Estado,Fecha")] Edificio edificio)
+        public ActionResult Create(Edificio edificio, string submitButton, int? tecnicoId)
         {
+            GetAllOptionsTecnicos();
+
             if (ModelState.IsValid)
             {
-                db.Edificios.Add(edificio);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                switch (submitButton)
+                {
+                    case "Crear":
+                        db.Edificios.Add(edificio);
+                        db.SaveChanges();
+                        return RedirectToAction("Index");
+                    case "Agregar Técnico":
+                        edificio.Tecnicos.Add(db.Personas.Find(Convert.ToInt32(Request.Form["TecnicosOptions"])));
+                        break;
+                    case null:
+                        edificio.Tecnicos = edificio.Tecnicos.Where(c => c.Id != tecnicoId).ToList();
+                        break;
+
+                }
             }
 
             return View(edificio);
         }
+
+        //private void AgregarTecnico(Edificio edificio)
+        //{
+        //    int idTecnico = Convert.ToInt32(Request.Form["TecnicosOptions"]);
+        //    //if (!existMaterialEnEdificio(idMaterial, edificio.Id))
+        //    //{
+        //    //    new EdificiosMaterialesService().Insert(edificio.Id, idMaterial);
+        //    //}
+        //    //else
+        //    //{
+        //    //    ModelState.AddModelError("Error", "Ya existe técnico.");
+        //    //}
+        //}
 
         // GET: Edificios/Edit/5
         public ActionResult Edit(int? id)

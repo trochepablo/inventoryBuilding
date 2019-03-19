@@ -10,6 +10,7 @@
 
 <p>
     @Html.ActionLink("Agregar Edificio", "Create", null, new { @class = "btn btn-success" })
+    <a class="btn btn-info" href="@(Url.Action("ExportIndex", "Edificios") + "?" + ViewContext.HttpContext.Request.QueryString)">Exportar</a>
 </p>
 
 @(Html
