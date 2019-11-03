@@ -19,9 +19,8 @@
                 {
                     columns.Add(model => model.Codigo).Titled("Codigo");
                     columns.Add(model => model.Direccion).Titled("Dirección");
-                    columns.Add(model => model.Tecnico).Titled("Técnico");
-                    columns.Add(model => model.Fecha).Titled("Fecha").Formatted("{0:d}").Filterable(false);
-                    columns.Add(model => model.CantidadMateriales).Titled("Cantidad M.").Sortable(true).InitialSort(GridSortOrder.Desc); 
+                    columns.Add(model => model.Fecha).Titled("Fecha Alta").Formatted("{0:d}").Filterable(false);
+                    columns.Add(model => model.FechaCumplido).Titled("Fecha Cumplido").Formatted("{0:d}").Filterable(false);
                     columns.Add(model => model.EstadoDesc).Titled("Estado").WithDefaultFilterMethod("starts-with")
             .WithFilterOptions(
                 new[]
@@ -31,6 +30,7 @@
                     new SelectListItem { Value = "Cumplido", Text = "Cumplido" }
                 }
             );
+                    columns.Add(model => model.CantidadMateriales).Titled("Cantidad Materiales").Sortable(true).InitialSort(GridSortOrder.Desc);
                     columns.Add(m => Html.ActionLink("Asociar", "associate", new { id = m.Id }, new { @class = "btn btn-success btn-xs" }));
                     columns.Add(m => Html.ActionLink("Detalle", "Details", new { id = m.Id }, new { @class = "btn btn-info btn-xs" }));
                     columns.Add(m => Html.ActionLink("Editar", "Edit", new { id = m.Id }, new { @class = "btn btn-primary btn-xs" }));
@@ -43,5 +43,5 @@
                 .Filterable()
                 .Sortable()
                 .Pageable()
-                
+
 )

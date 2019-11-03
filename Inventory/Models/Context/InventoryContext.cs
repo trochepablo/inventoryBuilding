@@ -16,7 +16,6 @@ namespace Inventory.Models.Context
         public DbSet<Edificio> Edificios { get; set; }
         public DbSet<Material> Materiales { get; set; }
         public DbSet<EdificiosMateriales> EdificiosMateriales { get; set; }
-
-        public System.Data.Entity.DbSet<Inventory.Models.Entity.Persona> Personas { get; set; }
+        public DbSet<Persona> Personas { get; set; }
     }
 }

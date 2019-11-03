@@ -16,17 +16,23 @@ namespace Inventory.Models.Entity
         }
 
         public int Id { get; set; }
+        [Required]
         public int Codigo { get; set; }
+        [Required]
         public string Direccion { get; set; }
-        public string Tecnico { get; set; }
-        public int Estado { get; set; }
+
+        public bool Estado { get; set; }
 
         public virtual List<Persona> Tecnicos { get; set; }
-        
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? Fecha { get; set; }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime? FechaCumplido { get; set; }
+
         public virtual ICollection<Material> Materiales { get; set; }
 
         public virtual List<EdificiosMateriales> EdificiosMateriales { get; set; }
@@ -45,8 +51,8 @@ namespace Inventory.Models.Entity
             {
                 switch (Estado)
                 {
-                    case 0: return "PreCumplido";
-                    case 1: return "Cumplido";
+                    case false: return "PreCumplido";
+                    case true: return "Cumplido";
                     default: return string.Empty;
                 }
             }

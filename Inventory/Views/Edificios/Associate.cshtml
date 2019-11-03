@@ -21,7 +21,6 @@
             @Html.HiddenFor(model => model.Codigo)
             @Html.HiddenFor(model => model.Codigo)
             @Html.HiddenFor(model => model.Direccion)
-            @Html.HiddenFor(model => model.Tecnico)
             @Html.HiddenFor(model => model.Estado)
             @Html.HiddenFor(model => model.Fecha)
 
@@ -43,14 +42,6 @@
                 </dd>
 
                 <dt>
-                    @Html.DisplayNameFor(model => model.Tecnico)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(model => model.Tecnico)
-                </dd>
-
-                <dt>
                     @Html.DisplayNameFor(model => model.Estado)
                 </dt>
 
@@ -65,7 +56,13 @@
                 <dd>
                     @Html.DisplayFor(model => model.Fecha)
                 </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.FechaCumplido)
+                </dt>
 
+                <dd>
+                    @Html.DisplayFor(model => model.FechaCumplido)
+                </dd>
             </dl>
         </div>
     </div>

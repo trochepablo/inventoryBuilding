@@ -157,7 +157,7 @@ namespace Inventory.Controllers
             {
                 param1 = req["estado-desc-starts-with"].ToLower();
 
-                int param = param1 == "cumplido" ? 1 : 0;
+                bool param = param1 == "cumplido" ? true : false;
 
                 list = db.Edificios.Where(c => c.Estado == param).ToList();
             }
@@ -230,11 +230,18 @@ namespace Inventory.Controllers
                 switch (submitButton)
                 {
                     case "Crear":
+                        List<Persona> tecBase = new List<Persona>();
+                        foreach (var item in edificio.Tecnicos)
+                        {
+                            tecBase.Add(db.Personas.Find(item.Id));
+                        }
+                        edificio.Tecnicos = tecBase;
                         db.Edificios.Add(edificio);
                         db.SaveChanges();
                         return RedirectToAction("Index");
                     case "Agregar Técnico":
-                        edificio.Tecnicos.Add(db.Personas.Find(Convert.ToInt32(Request.Form["TecnicosOptions"])));
+                        Persona p = db.Personas.Find(Convert.ToInt32(Request.Form["TecnicosOptions"]));
+                        edificio.Tecnicos.Add(p);
                         break;
                     case null:
                         edificio.Tecnicos = edificio.Tecnicos.Where(c => c.Id != tecnicoId).ToList();
@@ -279,7 +286,7 @@ namespace Inventory.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Codigo,Direccion,Tecnico,Estado,Fecha")] Edificio edificio)
+        public ActionResult Edit(Edificio edificio)
         {
             if (ModelState.IsValid)
             {

@@ -28,14 +28,6 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Tecnico)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Tecnico)
-        </dd>
-
-        <dt>
             @Html.DisplayNameFor(model => model.Estado)
         </dt>
 
@@ -50,10 +42,58 @@
         <dd>
             @Html.DisplayFor(model => model.Fecha)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FechaCumplido)
+        </dt>
 
+        <dd>
+            @Html.DisplayFor(model => model.FechaCumplido)
+        </dd>
     </dl>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">Tecnicos</div>
+        <div class="panel-body">
+            <table class="table table-bordered">
+                <tr>
+                    <th>
+                        DNI
+                    </th>
+                    <th>
+                        Nombre
+                    </th>
+                    <th>
+                        Cargo
+                    </th>
+                    <th></th>
+                </tr>
+
+                @for (var i = 0; i < (Model != null ? Model.Tecnicos.Count : 0); i++)
+                {
+                    @Html.HiddenFor(x => x.Tecnicos[i].Id)
+                    @Html.HiddenFor(x => x.Tecnicos[i].Nombre)
+                    @Html.HiddenFor(x => x.Tecnicos[i].Cargo)
+                    @Html.HiddenFor(x => x.Tecnicos[i].Dni)
+                    @Html.HiddenFor(x => x.Tecnicos[i].Direccion)
+                    @Html.HiddenFor(x => x.Tecnicos[i].Telefono)
+
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(x => x.Tecnicos[i].Dni)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(x => x.Tecnicos[i].Nombre)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(x => x.Tecnicos[i].Cargo)
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
 </div>
 <p>
-    @Html.ActionLink("Editar", "Edit", new { id = Model.Id }, new { @class = "btn btn-success" }) 
+    @Html.ActionLink("Editar", "Edit", new { id = Model.Id }, new { @class = "btn btn-success" })
     @Html.ActionLink("Volver", "Index", null, new { @class = "btn btn-default" })
 </p>
